@@ -14,3 +14,19 @@ services:
       - backend
     ports:
       - "80:80"
+      - "443:443"
+    volumes:
+      - certbot_www:/var/www/certbot:ro
+      - certbot_conf:/etc/letsencrypt:ro
+
+  certbot:
+    image: certbot/certbot:latest
+    profiles:
+      - tools
+    volumes:
+      - certbot_www:/var/www/certbot
+      - certbot_conf:/etc/letsencrypt
+
+volumes:
+  certbot_www:
+  certbot_conf:
