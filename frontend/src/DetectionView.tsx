@@ -5,11 +5,22 @@ import { useEffect, useRef, useState } from 'react'
 const API = import.meta.env.VITE_API_URL || ''
 
 type Model = 'baseline' | 'p2'
-type Deteksi = { name: string; score: number; box: number[]; calories: number }
+export type Deteksi = { name: string; score: number; box: number[]; calories: number }
+// Data yang dioper ke halaman Estimasi Harga.
+export type KirimanDeteksi = {
+  foto: Blob
+  gambar: string
+  deteksi: Deteksi[]
+  pilihTerendah?: boolean // true: snack berkalori terendah dipilih lebih dulu
+}
 type Halaman = 'pick' | 'preview' | 'result'
 
 // Mengelola pemilihan foto, proses deteksi, dan tampilan hasilnya.
-export default function DetectionView() {
+// langsung=true: setelah deteksi selesai, hasil kalori dilewati dan langsung memanggil onLanjut.
+export default function DetectionView({ onLanjut, langsung = false }: {
+  onLanjut?: (data: KirimanDeteksi) => void
+  langsung?: boolean
+}) {
   const [halaman, setHalaman] = useState<Halaman>('pick')
   const [foto, setFoto] = useState<Blob | null>(null)
   const [gambar, setGambar] = useState('')
@@ -120,7 +131,12 @@ export default function DetectionView() {
     try {
       const respons = await fetch(`${API}/api/detect`, { method: 'POST', body: form })
       if (!respons.ok) throw new Error((await respons.json()).detail)
-      setDaftarDeteksi((await respons.json()).detections)
+      const hasil: Deteksi[] = (await respons.json()).detections
+      if (langsung && onLanjut) {
+        onLanjut({ foto, gambar, deteksi: hasil })
+        return
+      }
+      setDaftarDeteksi(hasil)
       setModelTerpakai(model)
       setPesan('')
       setHalaman('result')
@@ -224,6 +240,14 @@ export default function DetectionView() {
           </>
         )}
         {halaman === 'result' && <button onClick={ulangi}>FOTO BARU</button>}
+        {halaman === 'result' && onLanjut && (
+          <button
+            className="primary"
+            onClick={() => onLanjut({ foto: foto!, gambar, deteksi: daftarDeteksi, pilihTerendah: true })}
+          >
+            Lanjut ke Price Estimation
+          </button>
+        )}
         <input
           ref={inputFileRef}
           type="file"

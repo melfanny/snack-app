@@ -1,12 +1,15 @@
 import { useState } from 'react'
 import DetectionView from './DetectionView'
 import TutorialView from './TutorialView'
+import PriceView from './PriceView'
+import type { KirimanDeteksi } from './DetectionView'
 
-type Tab = 'home' | 'detect' | 'about'
+type Tab = 'home' | 'detect' | 'price' | 'about'
 
 // Menampilkan halaman aplikasi dan mempertahankan status deteksi saat tab berubah.
 export default function App() {
   const [tab, setTab] = useState<Tab>('home')
+  const [kiriman, setKiriman] = useState<KirimanDeteksi | null>(null)
   const [open, setOpen] = useState(window.innerWidth > 700)
 
   // Berpindah halaman dan menutup menu pada layar ponsel.
@@ -35,6 +38,12 @@ export default function App() {
               onClick={() => go('detect')}
             >
               Product Detection
+            </button>
+            <button
+              className={tab === 'price' ? 'active' : ''}
+              onClick={() => go('price')}
+            >
+              Price Estimation
             </button>
             <button
               className={tab === 'about' ? 'active' : ''}
@@ -66,12 +75,23 @@ export default function App() {
           {tab === 'detect' && (
             <h2 className="page-title">Product Detection</h2>
           )}
+          {tab === 'price' && <h2 className="page-title">Price Estimation</h2>}
           {tab === 'about' && (
             <h2 className="page-title">Tutorial & About</h2>
           )}
           <div style={{ display: tab === 'detect' ? 'block' : 'none' }}>
-            <DetectionView />
+            <DetectionView
+              onLanjut={data => {
+                setKiriman(data)
+                go('price')
+              }}
+            />
           </div>
+          {tab === 'price' && (kiriman ? (
+            <PriceView key={kiriman.gambar} kiriman={kiriman} onGantiFoto={() => setKiriman(null)} />
+          ) : (
+            <DetectionView onLanjut={setKiriman} langsung />
+          ))}
           {tab === 'about' && <TutorialView />}
         </main>
       </div>

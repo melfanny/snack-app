@@ -74,6 +74,28 @@
 
       .card { text-align: left; background: #fff; border: 2px solid #222; border-radius: 14px; padding: 4px 20px 12px; box-shadow: 4px 4px #222; }
 
+      /* Halaman estimasi harga */
+      .price { max-width: 640px; margin: 0 auto; text-align: left; }
+      .price .box { margin-bottom: 0; }
+      .price-item { background: #fff; border: 2px solid #222; border-radius: 14px; padding: 12px; margin: 10px 0; box-shadow: 3px 3px #222; }
+      .price-item { cursor: pointer; } .price-item.sel { background: #fff3cd; }
+      .price .hint { margin: 12px 0 0; color: #666; font-size: 14px; }
+      .price-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px; }
+      .price-foot { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
+      .chips button.gram { padding: 4px 12px; font-size: 13px; box-shadow: 2px 2px #222; }
+      .qty { display: flex; align-items: center; gap: 10px; }
+      .qty button { width: 34px; height: 34px; padding: 0; line-height: 1; }
+      .qty span { min-width: 24px; text-align: center; font-weight: bold; }
+      .add-snack { display: flex; gap: 8px; flex-wrap: wrap; margin: 16px 0; }
+      .add-snack select { flex: 1; min-width: 200px; padding: 10px; border: 2px solid #222; border-radius: 12px; font-size: 15px; background: #fff; }
+      .summary { background: #ffc107; max-width: none; }
+      .summary p { margin: 8px 0 0; }
+      .summary h3 { margin: 4px 0 8px; font-family: 'Archivo Black', sans-serif; font-size: 30px; }
+      @media (min-width: 1000px) {
+        .price { max-width: 1100px; display: grid; grid-template-columns: 1fr 1fr; gap: 0 24px; align-items: start; }
+        .price-left { position: sticky; top: 16px; }
+      }
+
       /* HP: sidebar menumpuk di atas konten (konten tetap di tengah layar) */
       @media (max-width: 700px) {
         nav { position: absolute; top: 0; bottom: 0; left: 0; z-index: 1; }
