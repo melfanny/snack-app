@@ -2,6 +2,13 @@
 
 Pastikan Docker Engine dan Docker Compose sudah terpasang, lalu jalankan dari folder utama project:
 
+Sebelum menjalankan aplikasi, salin file bobot model ke server (misalnya dengan `scp`):
+
+- `backend/models/RT-DETR/RT-DETR.slim.pth`
+- `backend/models/RT-DETR-P2/RT-DETR-P2.slim.pth`
+
+Folder `backend/models` dipasang ke container saat runtime. File bobot tidak disimpan di GitHub; kedua file di atas harus tersedia pada server agar deteksi bisa digunakan.
+
 ```sh
 docker compose up -d --build
 ```

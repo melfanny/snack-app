@@ -19,3 +19,6 @@ frontend/dist/
 .idea/
 Thumbs.db
 .DS_Store
+
+# Checkpoint model (kirim lewat scp/Releases, terlalu besar untuk GitHub)
+*.pth

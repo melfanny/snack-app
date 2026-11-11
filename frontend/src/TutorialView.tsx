@@ -20,7 +20,7 @@ export default function TutorialView() {
       </ol>
 
       <h3>About</h3>
-      <p>Aplikasi ini mendeteksi produk snack menggunakan model RT-DETR dengan tingkat kepercayaan (confidence) minimal 0,50 kemudian menampilkan informasi kalori per 100 g untuk setiap produk yang terdeteksi.</p>
+      <p>Aplikasi ini mendeteksi produk snack menggunakan model RT-DETRv2 (PyTorch) dengan backbone HGNetv2-L dalam dua varian: Baseline dan P2 (menggunakan modul S2-CCFF untuk fitur objek kecil), dengan tingkat kepercayaan (confidence) minimal 0,50 kemudian menampilkan informasi kalori per 100 g untuk setiap produk yang terdeteksi.</p>
 
       <p><b>Jenis snack yang dapat dideteksi (15 kelas):</b></p>
       {BRANDS.map(b => (

@@ -3,6 +3,8 @@ services:
     build:
       context: ./backend
     restart: unless-stopped
+    volumes:
+      - ./backend/models:/app/models:ro
     expose:
       - "8001"
 
