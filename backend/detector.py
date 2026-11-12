@@ -5,7 +5,8 @@ import sys
 from pathlib import Path
 
 import torch
-from PIL import Image
+from PIL import Image, ImageOps
+from torchvision.ops import batched_nms
 from torchvision.transforms import v2 as T
 
 # Source RT-DETRv2 PyTorch native (mendaftarkan semua modul, termasuk S2-CCFF).
@@ -15,7 +16,8 @@ from src.core import YAMLConfig  # noqa: E402
 
 logger = logging.getLogger(__name__)
 
-AMBANG_CONFIDENCE = 0.50
+AMBANG_CONFIDENCE = 0.25
+AMBANG_IOU = 0.50
 UKURAN_INPUT = (640, 640)  # sama dengan Resize pada val_dataloader saat training
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -138,7 +140,7 @@ def cari_kalori_terendah(daftar_deteksi):
 # Menjalankan deteksi gambar dan menyusun respons sesuai format API.
 def detect(image_bytes: bytes, model_name: str = "baseline"):
     model = muat_model(model_name)
-    gambar = Image.open(io.BytesIO(image_bytes)).convert("RGB")
+    gambar = ImageOps.exif_transpose(Image.open(io.BytesIO(image_bytes))).convert("RGB")
     lebar, tinggi = gambar.size
     masukan = transform_gambar(gambar).unsqueeze(0).to(DEVICE)
     ukuran_asli = torch.tensor([[lebar, tinggi]], dtype=torch.float32, device=DEVICE)
@@ -146,14 +148,18 @@ def detect(image_bytes: bytes, model_name: str = "baseline"):
         keluaran = model.model(masukan)
         hasil_model = model.postprocessor(keluaran, ukuran_asli)[0]
 
+    mask_confidence = hasil_model["scores"] >= AMBANG_CONFIDENCE
+    labels = hasil_model["labels"][mask_confidence]
+    boxes = hasil_model["boxes"][mask_confidence]
+    scores = hasil_model["scores"][mask_confidence]
+    indeks_terpilih = batched_nms(boxes, scores, labels, AMBANG_IOU)
+
     daftar_deteksi = []
     for label, kotak, skor in zip(
-        hasil_model["labels"].tolist(),
-        hasil_model["boxes"].tolist(),
-        hasil_model["scores"].tolist(),
+        labels[indeks_terpilih].tolist(),
+        boxes[indeks_terpilih].tolist(),
+        scores[indeks_terpilih].tolist(),
     ):
-        if skor < AMBANG_CONFIDENCE:
-            continue
         nama_snack = NAMA_KELAS[int(label)]
         if nama_snack not in DATA_KALORI:
             logger.warning("Nama tidak ada di CSV, dilewati: %s", nama_snack)

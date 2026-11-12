@@ -164,7 +164,7 @@ export default function DetectionView({ onLanjut, langsung = false }: {
 
   return (
     <div className={'wrap ' + halaman}>
-      <div className="box">
+      <div className={'box' + (halaman !== 'pick' ? ' has-image' : '')}>
         {halaman === 'pick' && kameraAktif && (
           <video ref={videoRef} autoPlay playsInline muted />
         )}

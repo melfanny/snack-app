@@ -100,7 +100,7 @@ export default function PriceView({ kiriman, onGantiFoto }: Props) {
   return (
     <div className="price">
       <div className="price-left">
-        <div className="box">
+        <div className="box has-image">
           <img src={kiriman.gambar} />
           {kiriman.deteksi.map((d, indeks) => (
             <div
